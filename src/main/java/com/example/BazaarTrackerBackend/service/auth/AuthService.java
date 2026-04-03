@@ -9,6 +9,7 @@ import com.example.BazaarTrackerBackend.model.entity.User;
 import com.example.BazaarTrackerBackend.model.enums.UserRole;
 import com.example.BazaarTrackerBackend.repository.user.UserRepository;
 import com.example.BazaarTrackerBackend.security.jwt.JwtUtil;
+import com.google.cloud.Timestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,8 +47,8 @@ public class AuthService {
         user.setRole(UserRole.ADMIN); // default role
         user.setActive(true);
 
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
+        user.setCreatedAt(Timestamp.now());
+        user.setUpdatedAt(Timestamp.now());
 
         userRepository.save(user);
 

@@ -4,6 +4,10 @@ import com.example.BazaarTrackerBackend.model.enums.UserRole;
 
 import java.time.LocalDateTime;
 
+import com.google.cloud.Timestamp;
+
+
+
 public class User {
 
     private String id;
@@ -16,8 +20,8 @@ public class User {
 
     private boolean isActive;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public User() {}
 
@@ -71,19 +75,19 @@ public class User {
         isActive = active;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 }
