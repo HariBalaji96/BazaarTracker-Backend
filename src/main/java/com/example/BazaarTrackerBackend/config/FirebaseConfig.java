@@ -23,8 +23,19 @@ public class FirebaseConfig {
     public Firestore firestore() throws IOException {
         GoogleCredentials credentials = null;
 
-        // Try reading from the specified file path locally
-        if (firebaseCredentialsPath != null && !firebaseCredentialsPath.isEmpty()) {
+        // 1. Try reading from a raw JSON environment variable (Easiest for Render Dashboard)
+        String envJson = System.getenv("FIREBASE_CREDENTIALS_JSON");
+        if (envJson != null && !envJson.isBlank()) {
+            try {
+                credentials = GoogleCredentials.fromStream(new java.io.ByteArrayInputStream(envJson.getBytes()));
+                System.out.println("Loaded Firebase credentials from FIREBASE_CREDENTIALS_JSON environment variable.");
+            } catch (Exception e) {
+                System.out.println("Failed to parse FIREBASE_CREDENTIALS_JSON: " + e.getMessage());
+            }
+        }
+
+        // 2. Try reading from the local application.properties file path
+        if (credentials == null && firebaseCredentialsPath != null && !firebaseCredentialsPath.isEmpty()) {
             try {
                 FileInputStream serviceAccount = new FileInputStream(firebaseCredentialsPath);
                 credentials = GoogleCredentials.fromStream(serviceAccount);
