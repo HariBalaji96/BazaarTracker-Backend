@@ -1,4 +1,4 @@
-package com.example.bazaarTrackerBackend.controller.expense;
+package com.example.BazaarTrackerBackend.controller.expense;
 
 import com.example.BazaarTrackerBackend.dto.expense.*;
 import com.example.BazaarTrackerBackend.service.expense.ExpenseService;

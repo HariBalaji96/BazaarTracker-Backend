@@ -1,4 +1,4 @@
-package com.example.bazaarTrackerBackend.config;
+package com.example.BazaarTrackerBackend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
