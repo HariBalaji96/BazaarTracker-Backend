@@ -16,16 +16,27 @@ import java.io.IOException;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${firebase.credentials.path}")
+    @Value("${firebase.credentials.path:}")
     private String firebaseCredentialsPath;
 
     @Bean
     public Firestore firestore() throws IOException {
+        GoogleCredentials credentials = null;
 
-        FileInputStream serviceAccount =
-                new FileInputStream(firebaseCredentialsPath);
+        // Try reading from the specified file path locally
+        if (firebaseCredentialsPath != null && !firebaseCredentialsPath.isEmpty()) {
+            try {
+                FileInputStream serviceAccount = new FileInputStream(firebaseCredentialsPath);
+                credentials = GoogleCredentials.fromStream(serviceAccount);
+            } catch (Exception e) {
+                System.out.println("Could not load Firebase file from path. Falling back to Default Credentials...");
+            }
+        }
 
-        GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
+        // If file didn't exist (e.g. running in Docker/Render), use Application Default Credentials
+        if (credentials == null) {
+            credentials = GoogleCredentials.getApplicationDefault();
+        }
 
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(credentials)
