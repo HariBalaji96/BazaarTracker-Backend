@@ -1,4 +1,4 @@
-package com.example.bazaarTrackerBackend.config;
+package com.example.BazaarTrackerBackend.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
