@@ -2,22 +2,18 @@ package com.example.BazaarTrackerBackend.service.payment;
 
 import com.example.BazaarTrackerBackend.dto.payment.PaymentRequest;
 import com.example.BazaarTrackerBackend.dto.payment.PaymentResponse;
-
+import com.example.BazaarTrackerBackend.exception.CustomException;
 import com.example.BazaarTrackerBackend.mapper.PaymentMapper;
-
 import com.example.BazaarTrackerBackend.model.entity.Payment;
 import com.example.BazaarTrackerBackend.model.entity.Vendor;
-
 import com.example.BazaarTrackerBackend.repository.firestore.FirestoreRepository;
-
 import com.example.BazaarTrackerBackend.constants.CollectionNames;
-
 import com.example.BazaarTrackerBackend.service.vendor.VendorService;
-
+import com.example.BazaarTrackerBackend.service.dashboard.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.google.cloud.Timestamp;
 import java.util.List;
 
 @Service
@@ -29,66 +25,69 @@ public class PaymentService {
     @Autowired
     private VendorService vendorService;
 
+    @Autowired
+    private DashboardService dashboardService;
+
     private static final String COLLECTION = CollectionNames.PAYMENTS;
 
-    // ✅ CREATE PAYMENT
+    private String getCurrentUserId() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
     public PaymentResponse createPayment(PaymentRequest request) throws Exception {
 
-        // ⚠️ Step 1: Validate input
         if (request.getAmount() <= 0) {
-            throw new RuntimeException("Payment amount must be greater than 0");
+            throw new CustomException("Payment amount must be greater than 0", 400);
         }
 
         if (request.getVendorId() == null) {
-            throw new RuntimeException("Vendor is required");
+            throw new CustomException("Vendor is required", 400);
         }
 
-        // ⚠️ Step 2: Fetch vendor
-        Vendor vendor = firestoreRepository.findById(
-                CollectionNames.VENDORS,
-                request.getVendorId(),
-                Vendor.class
-        );
+        // Fetch Vendor and assert authority natively
+        Vendor vendor = firestoreRepository.findById(CollectionNames.VENDORS, request.getVendorId(), Vendor.class);
 
-        if (vendor == null) {
-            throw new RuntimeException("Vendor not found");
+        if (vendor == null || !vendor.getUserId().equals(getCurrentUserId())) {
+            throw new CustomException("Vendor not found or unauthorized", 404);
         }
 
-        // ⚠️ Step 3: Prevent overpayment
         if (request.getAmount() > vendor.getPendingAmount()) {
-            throw new RuntimeException("Payment exceeds pending amount");
+            throw new CustomException("Payment exceeds pending amount", 400);
         }
 
-        // ⚠️ Step 4: Update vendor credit system
+        // Add payment update internally handled in VendorService
         vendorService.addPayment(request.getVendorId(), request.getAmount());
 
-        // ⚠️ Step 5: Save payment record
         Payment payment = PaymentMapper.toEntity(request);
-
-        payment.setCreatedAt(LocalDateTime.now());
-        payment.setUpdatedAt(LocalDateTime.now());
+        String userId = getCurrentUserId();
+        payment.setUserId(userId);
+        payment.setCreatedAt(Timestamp.now());
+        payment.setUpdatedAt(Timestamp.now());
 
         Payment saved = firestoreRepository.save(COLLECTION, payment);
+
+        // Update Dashboard
+        dashboardService.recordPayment(userId, request.getAmount());
 
         return PaymentMapper.toResponse(saved);
     }
 
-    // ✅ GET ALL PAYMENTS
     public List<PaymentResponse> getAllPayments() throws Exception {
-
-        return firestoreRepository.findAll(COLLECTION, Payment.class)
+        return firestoreRepository.findByField(COLLECTION, "userId", getCurrentUserId(), Payment.class)
                 .stream()
                 .map(PaymentMapper::toResponse)
                 .toList();
     }
 
-    // ✅ GET PAYMENT BY ID
     public PaymentResponse getPaymentById(String id) throws Exception {
-
         Payment payment = firestoreRepository.findById(COLLECTION, id, Payment.class);
 
         if (payment == null) {
-            throw new RuntimeException("Payment not found");
+            throw new CustomException("Payment not found", 404);
+        }
+
+        if (payment.getUserId() == null || !payment.getUserId().equals(getCurrentUserId())) {
+            throw new CustomException("Unauthorized access", 403);
         }
 
         return PaymentMapper.toResponse(payment);

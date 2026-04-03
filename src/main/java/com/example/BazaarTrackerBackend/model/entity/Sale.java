@@ -2,10 +2,20 @@ package com.example.BazaarTrackerBackend.model.entity;
 
 import com.example.BazaarTrackerBackend.model.enums.SaleType;
 
-import java.time.LocalDateTime;
+import com.google.cloud.Timestamp;
 import java.util.List;
 
 public class Sale {
+    private String userId;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
 
     private String id;
 
@@ -16,12 +26,12 @@ public class Sale {
 
     private double totalAmount;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public Sale() {}
 
-    // 🔹 Inner class for items
+    // Ã°Å¸â€Â¹ Inner class for items
     public static class SaleItem {
         private String productId;
         private int quantity;
@@ -94,19 +104,19 @@ public class Sale {
         this.totalAmount = totalAmount;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

@@ -2,7 +2,7 @@ package com.example.BazaarTrackerBackend.model.entity;
 
 import com.example.BazaarTrackerBackend.model.enums.UserRole;
 
-import java.time.LocalDateTime;
+
 
 import com.google.cloud.Timestamp;
 

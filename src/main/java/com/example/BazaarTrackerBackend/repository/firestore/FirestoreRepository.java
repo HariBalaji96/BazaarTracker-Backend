@@ -73,6 +73,22 @@ public class FirestoreRepository {
                 .collect(Collectors.toList());
     }
 
+    // ✅ FIND BY FIELD
+    public <T> List<T> findByField(String collectionName, String field, String value, Class<T> clazz)
+            throws ExecutionException, InterruptedException {
+
+        List<QueryDocumentSnapshot> documents = firestore
+                .collection(collectionName)
+                .whereEqualTo(field, value)
+                .get()
+                .get()
+                .getDocuments();
+
+        return documents.stream()
+                .map(doc -> doc.toObject(clazz))
+                .collect(Collectors.toList());
+    }
+
     // ✅ DELETE
     public void delete(String collectionName, String id)
             throws ExecutionException, InterruptedException {

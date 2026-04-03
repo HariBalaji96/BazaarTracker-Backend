@@ -1,8 +1,18 @@
 package com.example.BazaarTrackerBackend.model.entity;
 
-import java.time.LocalDateTime;
+import com.google.cloud.Timestamp;
 
 public class Vendor {
+    private String userId;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
 
     private String id;
 
@@ -10,15 +20,15 @@ public class Vendor {
     private String phone;
     private String address;
 
-    // 💰 CREDIT SYSTEM
+    // Ã°Å¸â€™Â° CREDIT SYSTEM
     private double totalCreditGiven;
     private double totalPaidAmount;
     private double pendingAmount;
 
     private boolean isActive;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public Vendor() {}
 
@@ -88,19 +98,19 @@ public class Vendor {
         this.address = address;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 }
