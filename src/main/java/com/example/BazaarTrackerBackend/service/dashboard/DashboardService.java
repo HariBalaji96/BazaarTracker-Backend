@@ -40,6 +40,15 @@ public class DashboardService {
         updateProfitAndSave(cache);
     }
 
+    public synchronized void reverseSale(String userId, double amount, SaleType saleType) throws Exception {
+        DashboardCache cache = getOrCreateCache(userId);
+        cache.setTotalSales(cache.getTotalSales() - amount);
+        if (saleType == SaleType.CREDIT) {
+            cache.setTotalCredit(cache.getTotalCredit() - amount);
+        }
+        updateProfitAndSave(cache);
+    }
+
     public synchronized void recordPayment(String userId, double amount) throws Exception {
         DashboardCache cache = getOrCreateCache(userId);
         cache.setTotalPayments(cache.getTotalPayments() + amount);
@@ -49,6 +58,12 @@ public class DashboardService {
     public synchronized void recordExpense(String userId, double amount) throws Exception {
         DashboardCache cache = getOrCreateCache(userId);
         cache.setTotalExpenses(cache.getTotalExpenses() + amount);
+        updateProfitAndSave(cache);
+    }
+
+    public synchronized void reverseExpense(String userId, double amount) throws Exception {
+        DashboardCache cache = getOrCreateCache(userId);
+        cache.setTotalExpenses(cache.getTotalExpenses() - amount);
         updateProfitAndSave(cache);
     }
 

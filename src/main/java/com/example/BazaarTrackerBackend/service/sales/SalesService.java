@@ -114,4 +114,103 @@ public class SalesService {
 
         return SaleMapper.toResponse(sale);
     }
+
+    public void deleteSale(String id) throws Exception {
+        Sale sale = firestoreRepository.findById(SALE_COLLECTION, id, Sale.class);
+        if (sale == null) {
+            throw new CustomException("Sale not found", 404);
+        }
+        
+        String userId = getCurrentUserId();
+        if (sale.getUserId() == null || !sale.getUserId().equals(userId)) {
+            throw new CustomException("Unauthorized access", 403);
+        }
+
+        // 1. Revert Product Stock
+        for (Sale.SaleItem item : sale.getItems()) {
+            productService.increaseStock(item.getProductId(), item.getQuantity());
+        }
+
+        // 2. Revert Vendor Credit if applicable
+        if (sale.getSaleType() == SaleType.CREDIT) {
+            vendorService.addCredit(sale.getVendorId(), -sale.getTotalAmount());
+        }
+
+        // 3. Revert Dashboard
+        dashboardService.reverseSale(userId, sale.getTotalAmount(), sale.getSaleType());
+
+        // 4. Delete the Sale
+        firestoreRepository.delete(SALE_COLLECTION, id);
+    }
+
+    public SaleResponse updateSale(String id, SaleRequest request) throws Exception {
+        if (request.getItems() == null || request.getItems().isEmpty()) {
+            throw new CustomException("Sale must contain at least one item", 400);
+        }
+
+        Sale oldSale = firestoreRepository.findById(SALE_COLLECTION, id, Sale.class);
+        if (oldSale == null) {
+            throw new CustomException("Sale not found", 404);
+        }
+        String userId = getCurrentUserId();
+        if (oldSale.getUserId() == null || !oldSale.getUserId().equals(userId)) {
+             throw new CustomException("Unauthorized access", 403);
+        }
+        
+        // 1. Revert old sale
+        for (Sale.SaleItem item : oldSale.getItems()) {
+            productService.increaseStock(item.getProductId(), item.getQuantity());
+        }
+        if (oldSale.getSaleType() == SaleType.CREDIT) {
+            vendorService.addCredit(oldSale.getVendorId(), -oldSale.getTotalAmount());
+        }
+        dashboardService.reverseSale(userId, oldSale.getTotalAmount(), oldSale.getSaleType());
+
+        // 2. Process new sale items
+        double totalAmount = 0;
+
+        for (var item : request.getItems()) {
+            Product product = firestoreRepository.findById(
+                    CollectionNames.PRODUCTS,
+                    item.getProductId(),
+                    Product.class
+            );
+
+            if (product == null || !userId.equals(product.getUserId())) {
+                throw new CustomException("Product not found or unauthorized: " + item.getProductId(), 404);
+            }
+
+            if (product.getStock() < item.getQuantity()) {
+                throw new CustomException("Insufficient stock for: " + product.getName(), 400);
+            }
+
+            double itemTotal = product.getPrice() * item.getQuantity();
+            totalAmount += itemTotal;
+        }
+
+        for (var item : request.getItems()) {
+            productService.reduceStock(item.getProductId(), item.getQuantity());
+        }
+
+        if (request.getSaleType() == SaleType.CREDIT) {
+            if (request.getVendorId() == null) {
+                throw new CustomException("Vendor required for credit sale", 400);
+            }
+            vendorService.addCredit(request.getVendorId(), totalAmount);
+        }
+
+        // 3. Update the Sale Object
+        Sale updatedSale = SaleMapper.toEntity(request);
+        updatedSale.setId(id);
+        updatedSale.setUserId(userId);
+        updatedSale.setTotalAmount(totalAmount);
+        updatedSale.setCreatedAt(oldSale.getCreatedAt()); // keep old creation time
+        updatedSale.setUpdatedAt(Timestamp.now());
+
+        Sale saved = firestoreRepository.save(SALE_COLLECTION, updatedSale);
+
+        dashboardService.recordSale(userId, totalAmount, request.getSaleType());
+
+        return SaleMapper.toResponse(saved);
+    }
 }

@@ -25,4 +25,20 @@ public class ExpenseController {
     public ResponseEntity<List<ExpenseResponse>> getAll() throws Exception {
         return ResponseEntity.ok(expenseService.getAllExpenses());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ExpenseResponse> getById(@PathVariable String id) throws Exception {
+        return ResponseEntity.ok(expenseService.getExpenseById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ExpenseResponse> update(@PathVariable String id, @RequestBody ExpenseRequest request) throws Exception {
+        return ResponseEntity.ok(expenseService.updateExpense(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) throws Exception {
+        expenseService.deleteExpense(id);
+        return ResponseEntity.noContent().build();
+    }
 }
