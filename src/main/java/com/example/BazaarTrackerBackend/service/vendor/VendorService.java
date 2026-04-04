@@ -57,6 +57,28 @@ public class VendorService {
         return VendorMapper.toResponse(vendor);
     }
 
+    public VendorResponse updateVendor(String id, VendorRequest request) throws Exception {
+        Vendor vendor = getVendorEntity(id);
+
+        if (request.getName() != null && !request.getName().trim().isEmpty()) {
+            vendor.setName(request.getName());
+        }
+        if (request.getPhone() != null && !request.getPhone().trim().isEmpty()) {
+            vendor.setPhone(request.getPhone());
+        }
+        if (request.getAddress() != null && !request.getAddress().trim().isEmpty()) {
+            vendor.setAddress(request.getAddress());
+        }
+
+        saveVendor(vendor);
+        return VendorMapper.toResponse(vendor);
+    }
+
+    public void deleteVendor(String id) throws Exception {
+        getVendorEntity(id);
+        firestoreRepository.delete(COLLECTION, id);
+    }
+
     public void addCredit(String vendorId, double amount) throws Exception {
         Vendor vendor = getVendorEntity(vendorId);
         vendor.setTotalCreditGiven(vendor.getTotalCreditGiven() + amount);
