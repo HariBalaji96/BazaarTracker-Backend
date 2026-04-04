@@ -74,4 +74,47 @@ public class ExpenseService {
 
         return ExpenseMapper.toResponse(expense);
     }
+
+    public void deleteExpense(String id) throws Exception {
+        Expense expense = firestoreRepository.findById(COLLECTION, id, Expense.class);
+        if (expense == null) {
+            throw new CustomException("Expense not found", 404);
+        }
+        String userId = getCurrentUserId();
+        if (expense.getUserId() == null || !expense.getUserId().equals(userId)) {
+            throw new CustomException("Unauthorized access", 403);
+        }
+
+        dashboardService.reverseExpense(userId, expense.getAmount());
+        firestoreRepository.delete(COLLECTION, id);
+    }
+
+    public ExpenseResponse updateExpense(String id, ExpenseRequest request) throws Exception {
+        Expense oldExpense = firestoreRepository.findById(COLLECTION, id, Expense.class);
+        if (oldExpense == null) {
+            throw new CustomException("Expense not found", 404);
+        }
+        String userId = getCurrentUserId();
+        if (oldExpense.getUserId() == null || !oldExpense.getUserId().equals(userId)) {
+            throw new CustomException("Unauthorized access", 403);
+        }
+
+        if (request.getAmount() <= 0) {
+            throw new CustomException("Expense amount must be greater than 0", 400);
+        }
+        if (request.getCategory() == null || request.getCategory().trim().isEmpty()) {
+            throw new CustomException("Expense category is required", 400);
+        }
+
+        dashboardService.reverseExpense(userId, oldExpense.getAmount());
+
+        oldExpense.setCategory(request.getCategory());
+        oldExpense.setAmount(request.getAmount());
+        oldExpense.setUpdatedAt(Timestamp.now());
+
+        dashboardService.recordExpense(userId, request.getAmount());
+        
+        Expense saved = firestoreRepository.save(COLLECTION, oldExpense);
+        return ExpenseMapper.toResponse(saved);
+    }
 }
