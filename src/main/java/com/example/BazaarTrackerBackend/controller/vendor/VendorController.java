@@ -30,4 +30,15 @@ public class VendorController {
     public ResponseEntity<VendorResponse> getById(@PathVariable String id) throws Exception {
         return ResponseEntity.ok(vendorService.getVendorById(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<VendorResponse> update(@PathVariable String id, @RequestBody VendorRequest request) throws Exception {
+        return ResponseEntity.ok(vendorService.updateVendor(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) throws Exception {
+        vendorService.deleteVendor(id);
+        return ResponseEntity.noContent().build();
+    }
 }
