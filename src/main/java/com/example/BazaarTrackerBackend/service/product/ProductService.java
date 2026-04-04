@@ -52,6 +52,24 @@ public class ProductService {
         return ProductMapper.toResponse(product);
     }
 
+    public ProductResponse updateProduct(String id, ProductRequest request) throws Exception {
+        Product product = getProductEntity(id);
+
+        if (request.getName() != null && !request.getName().trim().isEmpty()) {
+            product.setName(request.getName());
+        }
+        product.setPrice(request.getPrice());
+        product.setStock(request.getStock());
+
+        saveProduct(product);
+        return ProductMapper.toResponse(product);
+    }
+
+    public void deleteProduct(String id) throws Exception {
+        getProductEntity(id);
+        firestoreRepository.delete(COLLECTION, id);
+    }
+
     public void reduceStock(String productId, int quantity) throws Exception {
         Product product = getProductEntity(productId);
         if (product.getStock() < quantity) {

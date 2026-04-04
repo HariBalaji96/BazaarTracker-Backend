@@ -25,4 +25,15 @@ public class ProductController {
     public ResponseEntity<List<ProductResponse>> getAll() throws Exception {
         return ResponseEntity.ok(productService.getAllProducts());
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> update(@PathVariable String id, @RequestBody ProductRequest request) throws Exception {
+        return ResponseEntity.ok(productService.updateProduct(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) throws Exception {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
 }
