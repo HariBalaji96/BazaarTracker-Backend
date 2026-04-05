@@ -4,10 +4,10 @@ public class PaymentRequest {
 
     private String vendorId;
     private double amount;
+    private String paymentMethod;
+    private String date;
 
     public PaymentRequest() {}
-
-    // getters & setters
 
     public String getVendorId() {
         return vendorId;
@@ -23,5 +23,21 @@ public class PaymentRequest {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

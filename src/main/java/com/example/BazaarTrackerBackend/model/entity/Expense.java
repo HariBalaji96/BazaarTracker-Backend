@@ -4,6 +4,15 @@ import com.google.cloud.Timestamp;
 
 public class Expense {
     private String userId;
+    private String id;
+    private String category;
+    private double amount;
+    private String description;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private Timestamp date;
+
+    public Expense() {}
 
     public String getUserId() {
         return userId;
@@ -12,19 +21,6 @@ public class Expense {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
-
-    private String id;
-
-    private String category;
-    private double amount;
-
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
-
-    public Expense() {}
-
-    // getters & setters
 
     public String getId() {
         return id;
@@ -50,6 +46,14 @@ public class Expense {
         this.amount = amount;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Timestamp getCreatedAt() {
         return createdAt;
     }
@@ -64,5 +68,13 @@ public class Expense {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Timestamp getDate() {
+        return date;
+    }
+
+    public void setDate(Timestamp date) {
+        this.date = date;
     }
 }

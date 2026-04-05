@@ -25,4 +25,9 @@ public class PaymentController {
     public ResponseEntity<List<PaymentResponse>> getAll() throws Exception {
         return ResponseEntity.ok(paymentService.getAllPayments());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PaymentResponse> getById(@PathVariable String id) throws Exception {
+        return ResponseEntity.ok(paymentService.getPaymentById(id));
+    }
 }
