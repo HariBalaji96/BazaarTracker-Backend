@@ -28,10 +28,11 @@ public class Sale {
 
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private Timestamp saleDate;
 
     public Sale() {}
 
-    // Ã°Å¸â€Â¹ Inner class for items
+    // 🔹 Inner class for items
     public static class SaleItem {
         private String productId;
         private int quantity;
@@ -118,5 +119,13 @@ public class Sale {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Timestamp getSaleDate() {
+        return saleDate;
+    }
+
+    public void setSaleDate(Timestamp saleDate) {
+        this.saleDate = saleDate;
     }
 }

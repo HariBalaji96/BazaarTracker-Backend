@@ -48,6 +48,7 @@ public class SalesService {
 
         double totalAmount = 0;
         String userId = getCurrentUserId();
+        java.util.Map<String, Double> productPrices = new java.util.HashMap<>();
 
         for (var item : request.getItems()) {
             Product product = firestoreRepository.findById(
@@ -61,11 +62,12 @@ public class SalesService {
             }
 
             if (product.getStock() < item.getQuantity()) {
-                throw new CustomException("Insufficient stock for: " + product.getName(), 400);
+                throw new CustomException("Quantity cannot be greater than the stock count in product: " + product.getName(), 400);
             }
 
             double itemTotal = product.getPrice() * item.getQuantity();
             totalAmount += itemTotal;
+            productPrices.put(item.getProductId(), product.getPrice());
         }
 
         for (var item : request.getItems()) {
@@ -80,6 +82,10 @@ public class SalesService {
         }
 
         Sale sale = SaleMapper.toEntity(request);
+
+        for (Sale.SaleItem saleItem : sale.getItems()) {
+            saleItem.setPrice(productPrices.get(saleItem.getProductId()));
+        }
 
         sale.setUserId(userId);
         sale.setTotalAmount(totalAmount);
@@ -168,6 +174,7 @@ public class SalesService {
 
         // 2. Process new sale items
         double totalAmount = 0;
+        java.util.Map<String, Double> productPrices = new java.util.HashMap<>();
 
         for (var item : request.getItems()) {
             Product product = firestoreRepository.findById(
@@ -181,11 +188,12 @@ public class SalesService {
             }
 
             if (product.getStock() < item.getQuantity()) {
-                throw new CustomException("Insufficient stock for: " + product.getName(), 400);
+                throw new CustomException("Quantity cannot be greater than the stock count in product: " + product.getName(), 400);
             }
 
             double itemTotal = product.getPrice() * item.getQuantity();
             totalAmount += itemTotal;
+            productPrices.put(item.getProductId(), product.getPrice());
         }
 
         for (var item : request.getItems()) {
@@ -201,6 +209,11 @@ public class SalesService {
 
         // 3. Update the Sale Object
         Sale updatedSale = SaleMapper.toEntity(request);
+
+        for (Sale.SaleItem saleItem : updatedSale.getItems()) {
+            saleItem.setPrice(productPrices.get(saleItem.getProductId()));
+        }
+
         updatedSale.setId(id);
         updatedSale.setUserId(userId);
         updatedSale.setTotalAmount(totalAmount);

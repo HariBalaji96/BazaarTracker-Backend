@@ -29,6 +29,16 @@ public class SaleMapper {
 
         sale.setItems(items);
 
+        if (request.getSaleDate() != null && !request.getSaleDate().isEmpty()) {
+            try {
+                sale.setSaleDate(com.google.cloud.Timestamp.ofTimeMicroseconds(java.time.Instant.parse(request.getSaleDate()).toEpochMilli() * 1000));
+            } catch (Exception e) {
+                sale.setSaleDate(com.google.cloud.Timestamp.now());
+            }
+        } else {
+            sale.setSaleDate(com.google.cloud.Timestamp.now());
+        }
+
         return sale;
     }
 
@@ -38,8 +48,31 @@ public class SaleMapper {
 
         response.setId(sale.getId());
         response.setVendorId(sale.getVendorId());
+        response.setUserId(sale.getUserId());
         response.setSaleType(sale.getSaleType());
         response.setTotalAmount(sale.getTotalAmount());
+        
+        if (sale.getSaleDate() != null) {
+            response.setSaleDate(sale.getSaleDate().toDate().toString());
+        }
+        
+        if (sale.getCreatedAt() != null) {
+            response.setCreatedAt(sale.getCreatedAt().toDate().toString());
+        }
+        if (sale.getUpdatedAt() != null) {
+            response.setUpdatedAt(sale.getUpdatedAt().toDate().toString());
+        }
+
+        if (sale.getItems() != null) {
+            List<SaleResponse.SaleItemResponse> responseItems = sale.getItems().stream().map(item -> {
+                SaleResponse.SaleItemResponse itemResponse = new SaleResponse.SaleItemResponse();
+                itemResponse.setProductId(item.getProductId());
+                itemResponse.setQuantity(item.getQuantity());
+                itemResponse.setPrice(item.getPrice());
+                return itemResponse;
+            }).collect(Collectors.toList());
+            response.setItems(responseItems);
+        }
 
         return response;
     }

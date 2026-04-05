@@ -4,8 +4,26 @@ public class ExpenseRequest {
 
     private String category;
     private double amount;
+    private String description;
+    private String date;
 
     public ExpenseRequest() {}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     // getters & setters
 

@@ -108,8 +108,11 @@ public class ExpenseService {
 
         dashboardService.reverseExpense(userId, oldExpense.getAmount());
 
-        oldExpense.setCategory(request.getCategory());
-        oldExpense.setAmount(request.getAmount());
+        Expense updatedFields = ExpenseMapper.toEntity(request);
+        oldExpense.setCategory(updatedFields.getCategory());
+        oldExpense.setAmount(updatedFields.getAmount());
+        oldExpense.setDescription(updatedFields.getDescription());
+        oldExpense.setDate(updatedFields.getDate());
         oldExpense.setUpdatedAt(Timestamp.now());
 
         dashboardService.recordExpense(userId, request.getAmount());

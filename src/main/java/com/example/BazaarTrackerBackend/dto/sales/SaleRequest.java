@@ -8,9 +8,18 @@ public class SaleRequest {
 
     private String vendorId;
     private SaleType saleType;
+    private String saleDate;
     private List<SaleItemRequest> items;
 
     public SaleRequest() {}
+
+    public String getSaleDate() {
+        return saleDate;
+    }
+
+    public void setSaleDate(String saleDate) {
+        this.saleDate = saleDate;
+    }
 
     // getters & setters
 
