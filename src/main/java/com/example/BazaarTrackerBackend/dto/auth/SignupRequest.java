@@ -4,6 +4,7 @@ public class SignupRequest {
 
     private String name;
     private String email;
+    private String companyName;
     private String password;
 
     public SignupRequest() {}
@@ -22,6 +23,14 @@ public class SignupRequest {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getPassword() {

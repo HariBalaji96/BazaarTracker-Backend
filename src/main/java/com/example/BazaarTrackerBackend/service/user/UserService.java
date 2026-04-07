@@ -36,6 +36,7 @@ public class UserService {
         response.setId(user.getId());
         response.setName(user.getName());
         response.setEmail(user.getEmail());
+        response.setCompanyName(user.getCompanyName());
         response.setRole(user.getRole());
 
         return response;
@@ -55,6 +56,7 @@ public class UserService {
         }
 
         user.setName(request.getName());
+        user.setCompanyName(request.getCompanyName());
 
         userRepository.save(user);
 

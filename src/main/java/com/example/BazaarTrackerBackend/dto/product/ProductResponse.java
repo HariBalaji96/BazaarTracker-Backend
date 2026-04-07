@@ -6,6 +6,7 @@ public class ProductResponse {
     private String name;
     private double price;
     private int stock;
+    private String unit;
     private boolean isActive;
 
     public ProductResponse() {}
@@ -42,6 +43,14 @@ public class ProductResponse {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public boolean isActive() {

@@ -58,6 +58,9 @@ public class ProductService {
         if (request.getName() != null && !request.getName().trim().isEmpty()) {
             product.setName(request.getName());
         }
+        if (request.getUnit() != null) {
+            product.setUnit(request.getUnit());
+        }
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
 

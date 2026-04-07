@@ -11,6 +11,7 @@ public class ProductMapper {
         Product product = new Product();
         product.setName(request.getName());
         product.setPrice(request.getPrice());
+        product.setUnit(request.getUnit());
 
         return product;
     }
@@ -23,6 +24,7 @@ public class ProductMapper {
         response.setName(product.getName());
         response.setPrice(product.getPrice());
         response.setStock(product.getStock());
+        response.setUnit(product.getUnit());
         response.setActive(product.isActive());
 
         return response;

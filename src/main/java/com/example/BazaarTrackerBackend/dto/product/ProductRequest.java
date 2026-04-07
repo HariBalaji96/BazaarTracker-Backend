@@ -5,6 +5,7 @@ public class ProductRequest {
     private String name;
     private double price;
     private int stock;
+    private String unit;
 
     public ProductRequest() {}
 
@@ -32,5 +33,13 @@ public class ProductRequest {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }

@@ -14,6 +14,8 @@ public class User {
 
     private String name;
     private String email;
+    @com.google.cloud.firestore.annotation.PropertyName("company_name")
+    private String companyName;
     private String password;
 
     private UserRole role;
@@ -49,6 +51,16 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @com.google.cloud.firestore.annotation.PropertyName("company_name")
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    @com.google.cloud.firestore.annotation.PropertyName("company_name")
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getPassword() {
