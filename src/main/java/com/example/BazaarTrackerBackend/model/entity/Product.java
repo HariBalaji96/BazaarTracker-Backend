@@ -3,7 +3,20 @@ package com.example.BazaarTrackerBackend.model.entity;
 import com.google.cloud.Timestamp;
 
 public class Product {
+
     private String userId;
+    private String id;
+    private String name;
+    private double price;
+    private int stock;
+    private String unit;
+    private boolean isActive;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+
+    public Product() {}
+
+    // getters & setters
 
     public String getUserId() {
         return userId;
@@ -12,22 +25,6 @@ public class Product {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
-
-    private String id;
-
-    private String name;
-    private double price;
-    private int stock;
-
-    private boolean isActive;
-
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
-
-    public Product() {}
-
-    // getters & setters
 
     public String getId() {
         return id;
@@ -59,6 +56,14 @@ public class Product {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public boolean isActive() {

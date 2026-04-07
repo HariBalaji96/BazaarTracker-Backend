@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Service
 public class AuthService {
@@ -42,6 +41,7 @@ public class AuthService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
+        user.setCompanyName(request.getCompanyName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         user.setRole(UserRole.ADMIN); // default role
