@@ -7,6 +7,7 @@ public class SaleResponse {
 
     private String id;
     private String vendorId;
+    private String vendorName;
     private String userId;
     private SaleType saleType;
     private double totalAmount;
@@ -39,6 +40,14 @@ public class SaleResponse {
 
     public void setVendorId(String vendorId) {
         this.vendorId = vendorId;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
     }
 
     public String getUserId() {
@@ -91,6 +100,7 @@ public class SaleResponse {
 
     public static class SaleItemResponse {
         private String productId;
+        private String productName;
         private int quantity;
         private double price;
 
@@ -102,6 +112,14 @@ public class SaleResponse {
 
         public void setProductId(String productId) {
             this.productId = productId;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public void setProductName(String productName) {
+            this.productName = productName;
         }
 
         public int getQuantity() {

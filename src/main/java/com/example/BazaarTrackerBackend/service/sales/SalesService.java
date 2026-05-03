@@ -97,13 +97,14 @@ public class SalesService {
         // Update Dashboard appropriately
         dashboardService.recordSale(userId, totalAmount, request.getSaleType());
 
-        return SaleMapper.toResponse(saved);
+        return populateAdditionalDetails(SaleMapper.toResponse(saved));
     }
 
     public List<SaleResponse> getAllSales() throws Exception {
         return firestoreRepository.findByField(SALE_COLLECTION, "userId", getCurrentUserId(), Sale.class)
                 .stream()
                 .map(SaleMapper::toResponse)
+                .map(this::populateAdditionalDetails)
                 .toList();
     }
 
@@ -118,7 +119,7 @@ public class SalesService {
             throw new CustomException("Unauthorized access", 403);
         }
 
-        return SaleMapper.toResponse(sale);
+        return populateAdditionalDetails(SaleMapper.toResponse(sale));
     }
 
     public void deleteSale(String id) throws Exception {
@@ -224,6 +225,30 @@ public class SalesService {
 
         dashboardService.recordSale(userId, totalAmount, request.getSaleType());
 
-        return SaleMapper.toResponse(saved);
+        return populateAdditionalDetails(SaleMapper.toResponse(saved));
+    }
+
+    private SaleResponse populateAdditionalDetails(SaleResponse response) {
+        if (response.getVendorId() != null) {
+            try {
+                response.setVendorName(vendorService.getVendorById(response.getVendorId()).getName());
+            } catch (Exception e) {
+                // Ignore if vendor not found
+            }
+        }
+        
+        if (response.getItems() != null) {
+            for (SaleResponse.SaleItemResponse item : response.getItems()) {
+                if (item.getProductId() != null) {
+                    try {
+                        item.setProductName(productService.getProductById(item.getProductId()).getName());
+                    } catch (Exception e) {
+                        // Ignore if product not found
+                    }
+                }
+            }
+        }
+        
+        return response;
     }
 }
